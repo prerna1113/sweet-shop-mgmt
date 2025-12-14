@@ -1,18 +1,25 @@
-import { useEffect } from 'react';
-import api from './api/api';
+import { useState } from 'react';
+import Navbar from './components/Navbar';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 function App() {
-  useEffect(() => {
-    api.get('/sweets')
-      .then(res => console.log('Sweets from backend:', res.data))
-      .catch(err => console.error(err));
-  }, []);
+  const [page, setPage] = useState('login');
 
   return (
-    <div>
-      <h1>Sweet Shop Management System</h1>
-      <p>Check console for backend data</p>
-    </div>
+    <>
+      <Navbar
+        onShowLogin={() => setPage('login')}
+        onShowRegister={() => setPage('register')}
+        onShowDashboard={() => setPage('dashboard')}
+      />
+
+      <div className="container mt-4">
+        {page === 'login' && <Login />}
+        {page === 'register' && <Register />}
+        {page === 'dashboard' && <h2>Dashboard coming next</h2>}
+      </div>
+    </>
   );
 }
 
