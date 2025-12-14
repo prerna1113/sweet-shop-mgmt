@@ -120,7 +120,7 @@ router.post('/:id/restock',protect,adminOnly, async (req, res) => {
   }
 });
 
-router.put('/:id', protect, async (req, res) => {
+router.put('/:id', protect,adminOnly, async (req, res) => {
   try {
     const sweet = await Sweet.findByIdAndUpdate(
       req.params.id,
