@@ -7,7 +7,7 @@ describe('Auth API', () => {
       .post('/api/auth/register')
       .send({
         name: 'Test User',
-        email: 'test@example.com',
+        email: `test${Date.now()}@example.com`,
         password: 'Password123'
       });
 
