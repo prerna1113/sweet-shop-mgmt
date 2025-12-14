@@ -21,6 +21,8 @@ function App() {
         {!user && page === 'login' && <Login />}
         {!user && page === 'register' && <Register />}
         {user && page === 'dashboard' && <Dashboard />}
+        {user?.role === "admin" && <AdminPanel />}
+
       </div>
     </>
   );

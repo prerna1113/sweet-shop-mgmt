@@ -1,20 +1,20 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useContext } from "react";
 
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     return token ? { token } : null;
   });
 
   const login = (token) => {
-    localStorage.setItem('token', token);
+    localStorage.setItem("token", token);
     setUser({ token });
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setUser(null);
   };
 
@@ -23,4 +23,9 @@ export function AuthProvider({ children }) {
       {children}
     </AuthContext.Provider>
   );
+}
+
+// THIS IS WHAT YOU WERE MISSING
+export function useAuth() {
+  return useContext(AuthContext);
 }
