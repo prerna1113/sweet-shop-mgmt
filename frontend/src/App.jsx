@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import { AuthContext } from './context/AuthContext';
 
 function App() {
+  const { user } = useContext(AuthContext);
   const [page, setPage] = useState('login');
 
   return (
@@ -15,9 +18,9 @@ function App() {
       />
 
       <div className="container mt-4">
-        {page === 'login' && <Login />}
-        {page === 'register' && <Register />}
-        {page === 'dashboard' && <h2>Dashboard coming next</h2>}
+        {!user && page === 'login' && <Login />}
+        {!user && page === 'register' && <Register />}
+        {user && page === 'dashboard' && <Dashboard />}
       </div>
     </>
   );
