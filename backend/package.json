@@ -8,9 +8,7 @@
     "start": "node src/index.js",
     "test": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles"
   },
-  "jest": {
-    "setupFilesAfterEnv": ["<rootDir>/src/tests/setup.js"]
-  },
+  
   "keywords": [],
   "author": "",
   "license": "ISC",
