@@ -1,27 +1,27 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Sweet = require('../models/Sweet');
-const { protect } = require('../middleware/authMiddleware');
-const { adminOnly } = require('../middleware/adminMiddleware');
+const Sweet = require("../models/Sweet");
+const { protect } = require("../middleware/authMiddleware");
+const adminOnly = require("../middleware/adminMiddleware");
 
-
-// POST /api/sweets → add a sweet
-router.post('/',protect, async (req, res) => {
+/*
+  ADMIN: Add a sweet
+*/
+router.post("/", protect, adminOnly, async (req, res) => {
   try {
     const { name, category, price, quantity } = req.body;
 
-    // basic validation
     if (!name || !category || price == null) {
-      return res.status(400).json({
-        message: 'Name, category and price are required'
-      });
+      return res
+        .status(400)
+        .json({ message: "Name, category and price are required" });
     }
 
     const sweet = await Sweet.create({
       name,
       category,
       price,
-      quantity
+      quantity,
     });
 
     res.status(201).json(sweet);
@@ -29,8 +29,11 @@ router.post('/',protect, async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-// GET /api/sweets → list all sweets
-router.get('/', async (req, res) => {
+
+/*
+  PUBLIC: Get all sweets
+*/
+router.get("/", async (req, res) => {
   try {
     const sweets = await Sweet.find();
     res.status(200).json(sweets);
@@ -39,18 +42,16 @@ router.get('/', async (req, res) => {
   }
 });
 
-
-
-// GET /api/sweets → list all sweets
-// GET /api/sweets/search
-router.get('/search', async (req, res) => {
+/*
+  PUBLIC: Search sweets
+*/
+router.get("/search", async (req, res) => {
   try {
     const { name, category, minPrice, maxPrice } = req.query;
-
     const filter = {};
 
     if (name) {
-      filter.name = { $regex: name, $options: 'i' };
+      filter.name = { $regex: name, $options: "i" };
     }
 
     if (category) {
@@ -70,57 +71,60 @@ router.get('/search', async (req, res) => {
   }
 });
 
-// POST /api/sweets/:id/purchase
-router.post('/:id/purchase',protect, async (req, res) => {
+/*
+  USER: Purchase sweet
+*/
+router.post("/:id/purchase", protect, async (req, res) => {
   try {
-    const { quantity } = req.body;
-    const purchaseQty = quantity ? Number(quantity) : 1;
+    const purchaseQty = Number(req.body.quantity || 1);
 
     const sweet = await Sweet.findById(req.params.id);
-
     if (!sweet) {
-      return res.status(404).json({ message: 'Sweet not found' });
+      return res.status(404).json({ message: "Sweet not found" });
     }
 
     if (sweet.quantity < purchaseQty) {
-      return res.status(400).json({ message: 'Insufficient stock' });
+      return res.status(400).json({ message: "Insufficient stock" });
     }
 
     sweet.quantity -= purchaseQty;
     await sweet.save();
 
-    res.status(200).json(sweet);
+    res.json(sweet);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-
-// POST /api/sweets/:id/restock
-router.post('/:id/restock',protect,adminOnly, async (req, res) => {
+/*
+  ADMIN: Restock sweet
+*/
+router.post("/:id/restock", protect, adminOnly, async (req, res) => {
   try {
-    const { quantity } = req.body;
+    const qty = Number(req.body.quantity);
 
-    if (!quantity || Number(quantity) <= 0) {
-      return res.status(400).json({ message: 'Valid quantity required' });
+    if (!qty || qty <= 0) {
+      return res.status(400).json({ message: "Valid quantity required" });
     }
 
     const sweet = await Sweet.findById(req.params.id);
-
     if (!sweet) {
-      return res.status(404).json({ message: 'Sweet not found' });
+      return res.status(404).json({ message: "Sweet not found" });
     }
 
-    sweet.quantity += Number(quantity);
+    sweet.quantity += qty;
     await sweet.save();
 
-    res.status(200).json(sweet);
+    res.json(sweet);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-router.put('/:id', protect,adminOnly, async (req, res) => {
+/*
+  ADMIN: Update sweet (price / quantity / name)
+*/
+router.put("/:id", protect, adminOnly, async (req, res) => {
   try {
     const sweet = await Sweet.findByIdAndUpdate(
       req.params.id,
@@ -129,7 +133,7 @@ router.put('/:id', protect,adminOnly, async (req, res) => {
     );
 
     if (!sweet) {
-      return res.status(404).json({ message: 'Sweet not found' });
+      return res.status(404).json({ message: "Sweet not found" });
     }
 
     res.json(sweet);
@@ -138,26 +142,21 @@ router.put('/:id', protect,adminOnly, async (req, res) => {
   }
 });
 
-
-router.delete('/:id', protect, adminOnly, async (req, res) => {
+/*
+  ADMIN: Delete sweet
+*/
+router.delete("/:id", protect, adminOnly, async (req, res) => {
   try {
     const sweet = await Sweet.findByIdAndDelete(req.params.id);
 
     if (!sweet) {
-      return res.status(404).json({ message: 'Sweet not found' });
+      return res.status(404).json({ message: "Sweet not found" });
     }
 
-    res.json({ message: 'Sweet deleted successfully' });
+    res.json({ message: "Sweet deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
-
-
-
-
-
-
-
 
 module.exports = router;

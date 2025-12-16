@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../api/api";
 import SweetCard from "../components/SweetCard";
 import SearchFilter from "../components/SearchFilter";
-import AddSweet from "../components/AddSweet";
+// import AddSweet from "../components/AddSweet";
 import { useAuth } from "../context/AuthContext";
 const sweetImages = [
   "https://images.unsplash.com/photo-1606491956689-2ea866880c84",
@@ -12,7 +12,7 @@ const sweetImages = [
   "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f",
 ];
 
-function Dashboard() {
+function Dashboard({ onEditSweet }) {
   const [sweets, setSweets] = useState([]);
   const { user, logout } = useAuth();
 
@@ -54,7 +54,7 @@ function Dashboard() {
     <div className="container mt-4">
       <h2 className="mb-3">Available Sweets</h2>
 
-      {user && <AddSweet onAdded={fetchSweets} />}
+      {/* {user?.role === "admin" && <AddSweet onAdded={fetchSweets} />} */}
 
       <SearchFilter onSearch={handleSearch} />
 
@@ -65,7 +65,7 @@ function Dashboard() {
               sweet={sweet}
               image={sweetImages[index % sweetImages.length]}
               onPurchase={handlePurchase}
-              onEdit={handleEdit}
+              onEdit={onEditSweet}
               onDelete={handleDelete}
             />
           </div>

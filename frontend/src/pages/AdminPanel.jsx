@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import api from "../api/api";
 import AdminSweetForm from "../components/AdminSweetForm";
 
-function AdminPanel() {
+function AdminPanel({ editingSweet, setEditingSweet, clearEditing }) {
   const [sweets, setSweets] = useState([]);
-  const [editingSweet, setEditingSweet] = useState(null);
+  const formRef = useRef(null);
 
   const fetchSweets = async () => {
     const res = await api.get("/sweets");
@@ -21,7 +21,8 @@ function AdminPanel() {
     } else {
       await api.post("/sweets", data);
     }
-    setEditingSweet(null);
+
+    clearEditing();
     fetchSweets();
   };
 
@@ -31,16 +32,32 @@ function AdminPanel() {
     fetchSweets();
   };
 
+  const handleEdit = (sweet) => {
+    setEditingSweet(sweet);
+
+    // 🔥 scroll to update form
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  };
+
   return (
     <div>
       <h2 className="mb-3">Admin Panel</h2>
 
-      <AdminSweetForm
-        onSubmit={handleAddOrUpdate}
-        editingSweet={editingSweet}
-      />
+      {/* UPDATE FORM */}
+      <div ref={formRef}>
+        <AdminSweetForm
+          editingSweet={editingSweet}
+          onSubmit={handleAddOrUpdate}
+        />
+      </div>
 
-      <table className="table table-bordered">
+      {/* TABLE */}
+      <table className="table table-bordered mt-4">
         <thead>
           <tr>
             <th>Name</th>
@@ -61,9 +78,9 @@ function AdminPanel() {
               <td>
                 <button
                   className="btn btn-sm btn-warning me-2"
-                  onClick={() => setEditingSweet(s)}
+                  onClick={() => handleEdit(s)}
                 >
-                  Edit
+                  Update
                 </button>
 
                 <button

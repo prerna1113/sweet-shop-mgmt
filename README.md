@@ -11,14 +11,23 @@ sweet listing, purchase functionality, and admin-only management features.
 ### 🏠 Home Page
 ![Home Page](./screenshots/home.png)
 
+### 👑 Admin Panel
+![Admin Panel](./screenshots/admin.png)
+
+### ✏️ Update Sweet (Admin)
+![Update Sweet](./screenshots/admin-update.png)
+
+### 🔍 Filter & Search Page
+![Filter & Search Page](./screenshots/filter.png)
+
+
+
 ### 📝 Register Page
 ![Register Page](./screenshots/register.png)
 
 ### 🔐 Login Page
 ![Login Page](./screenshots/login.png)
 
-### 🔍 Filter & Search Page
-![Filter & Search Page](./screenshots/filter.png)
 
 ---
 
@@ -32,6 +41,25 @@ sweet listing, purchase functionality, and admin-only management features.
 - Purchase sweets
 - Admin-only add, edit, and delete sweets
 - Backend REST APIs with Express and MongoDB
+
+## 👑 Admin Functionality (Assessment Focus)
+
+This project implements **role-based access control (RBAC)** using JWT.
+
+### 🔐 Authorization
+- Each user is assigned a role (`admin` or `user`) during registration.
+- The role is embedded inside the JWT and decoded on the frontend.
+- Admin access is granted only when `user.role === "admin"`.
+
+### 🛡 Security Enforcement
+- Admin-only backend routes are protected using middleware.
+- Non-admin users receive `403 Forbidden` responses.
+- Admin restrictions are enforced at both frontend and backend.
+
+### 🧠 Design Decisions
+- Single reusable form for **Add / Update** operations
+- Centralized Admin Panel for inventory management
+- Clean separation between user and admin responsibilities
 
 ---
 
